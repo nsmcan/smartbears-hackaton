@@ -1,0 +1,50 @@
+https://www.chocolate-doom.org/wiki/index.php/Building_Chocolate_Doom_on_Windows
+
+1. Download msys2 x86_64 from https://www.msys2.org/ and install into C:\Tools\msys64
+2. Run msys2 and to get the latest updates execute from its console: 
+   pacman -Syu
+3. Close msys console and repeat the step 2 again.
+
+4. Install Chocolate Doom dependencies:
+4.1. Run:
+   pacman -Syu base-devel
+4.2. Close msys console when requested and repeat the step 4.2 again, excluding pacman package from the list to be installed
+4.3. Run:    
+   pacman -Syu msys2-devel
+4.4. Close msys console when requested and repeat the step 4.3 again, excluding msys2-runtime-devel package from the list to be installed
+4.5. Run:
+   pacman -Syu mingw-w64-i686-{toolchain,SDL2{,_net,_mixer},libsamplerate,libpng} python zip git
+
+5. Clone the Chocolate Doom repository:
+   git clone https://github.com/chocolate-doom/chocolate-doom c:/repos/chocolate_doom
+
+6. Open MSYS2 MinGW 32-bit terminal and from the c:/repos/chocolate_doom run the commands:
+   ./autogen.sh --host=i686-w64-mingw32
+   make
+   cd pkg/win32
+   make
+
+7. Read article https://doomwiki.org/wiki/DOOM1.WAD and download Doom1 Shareware WAD from: 
+http://distro.ibiblio.org/pub/linux/distributions/slitaz/sources/packages/d/doom1.wad
+
+8. Clone the Restful Doom repository:
+    git clone https://github.com/jeff-1amstudios/restful-doom.git c:/repos/restful-doom
+
+9. Open MSYS2 MinGW 32-bit terminal and from the c:/repos/restful-doom run the commands:
+   ./configure-and-build.sh
+   ./autogen.sh --host=i686-w64-mingw32
+   make
+
+10. Copy all files from c:/repos/chocolate_doom/pkg/win32/staging-doom into c:/tools/doom/ folder
+    Copy all .exe files from c:/repos/restful-doom/src/ into c:/tools/doom/ folder
+    Copy the downloaded doom1.wad into c:/tools/doom/ folder
+
+11. From the c:/tools/doom/ run the Restful Doom:
+    restful-doom.exe -iwad doom1.wad -apiport 7777
+
+
+
+git remote add origin https://${git_user_id}:${GIT_TOKEN}@github.com/${git_user_id}/${git_repo_id}.git
+git remote add origin https://nsmcan:c79761f496d6f33ebb48cb29d19473fee58d294b@github.com/nsmcan/smartbears-hackaton.git
+
+git push -u origin master
