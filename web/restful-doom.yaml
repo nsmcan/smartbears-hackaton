@@ -1,0 +1,463 @@
+openapi: 3.0.0
+info:
+  title: RESTful-DOOM
+  version: undefined
+servers:
+  - url: 'http://localhost:7777/'
+paths:
+  /api/player:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                id: 0
+                position:
+                  x: -32
+                  'y': -240
+                  z: 24
+                angle: 90
+                health: 100
+                type: Player
+                flags:
+                  MF_SOLID: true
+                  MF_SHOOTABLE: true
+                armor: 0
+                kills: 0
+                items: 0
+                secrets: 0
+                weapon: 1
+                keyCards:
+                  blue: false
+                  red: false
+                  yellow: false
+                cheatFlags: {}
+              schema:
+                $ref: '#/components/schemas/Player'
+      description: Query the player
+      operationId: GET_api-player
+    patch:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                id: 0
+                position:
+                  x: -32
+                  'y': -240
+                  z: 24
+                angle: 90
+                height: 56
+                health: 100
+                type: Player
+                flags:
+                  MF_SOLID: true
+                  MF_SHOOTABLE: true
+                  MF_DROPOFF: true
+                  MF_PICKUP: true
+                  MF_NOTDMATCH: true
+                armor: 0
+                kills: 0
+                items: 0
+                secrets: 0
+                weapon: 1
+                keyCards:
+                  blue: false
+                  red: false
+                  yellow: false
+                cheatFlags: {}
+              schema:
+                $ref: '#/components/schemas/Player'
+      description: Update the player
+      operationId: PATCH_api-player
+      requestBody:
+        content:
+          application/json:
+            example:
+              weapon: 3
+            schema:
+              $ref: '#/components/schemas/Player'
+        required: true
+  /api/player/actions:
+    post:
+      responses:
+        '201':
+          description: ''
+      description: Create an action for the player to perform
+      operationId: POST_api-player-actions
+      requestBody:
+        content:
+          application/json:
+            example:
+              type: shoot
+            schema:
+              $ref: '#/components/schemas/PlayerAction'
+        required: true
+  /api/world:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                episode: 1
+                map: 2
+              schema:
+                $ref: '#/components/schemas/World'
+      description: Query the current world state
+      operationId: GET_api-world
+    patch:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                episode: 1
+                map: 3
+              schema:
+                $ref: '#/components/schemas/World'
+      description: Update the current world state
+      operationId: PATCH_api-world
+      requestBody:
+        content:
+          application/json:
+            example:
+              map: 3
+            schema:
+              $ref: '#/components/schemas/World'
+        required: true
+  /api/world/doors:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                example:
+                  - id: 140
+                    state: closed
+                    keyRequired: none
+                type: array
+                items:
+                  $ref: '#/components/schemas/Door'
+      description: Query door items
+      operationId: GET_api-world-doors
+  '/api/world/doors/{id}':
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                id: 140
+                state: closed
+                keyRequired: none
+              schema:
+                $ref: '#/components/schemas/Door'
+        '404':
+          description: The specified door does not exist
+      description: Query the specified door
+      operationId: GET_api-world-doors-id
+    patch:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                id: 140
+                state: open
+                keyRequired: none
+              schema:
+                $ref: '#/components/schemas/Door'
+        '404':
+          description: The specified door does not exist
+      description: Update the specified door
+      operationId: PATCH_api-world-doors-id
+      requestBody:
+        content:
+          application/json:
+            example:
+              state: open
+            schema:
+              $ref: '#/components/schemas/Door'
+        required: true
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: door id
+  /api/world/objects:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MapObject'
+      description: Query map object items
+      operationId: GET_api-world-objects
+      parameters:
+        - name: distance
+          in: query
+          required: true
+          description: |
+            Only return items up to this distance from player
+          schema:
+            type: string
+    post:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                id: 1
+              schema:
+                $ref: '#/components/schemas/MapObject'
+        '400':
+          description: The specified object type is invalid
+      description: Spawn a new map object
+      operationId: POST_api-world-objects
+      requestBody:
+        content:
+          application/json:
+            example:
+              type: IMP
+              distance: 250
+            schema:
+              $ref: '#/components/schemas/SpawnMapObject'
+        required: true
+  '/api/world/objects/{id}':
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                id: 1
+              schema:
+                $ref: '#/components/schemas/MapObject'
+        '404':
+          description: The specified object does not exist
+      description: Query the specified map object
+      operationId: GET_api-world-objects-id
+    patch:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              example:
+                id: 1
+              schema:
+                $ref: '#/components/schemas/MapObject'
+        '404':
+          description: The specified object does not exist
+      description: Update the specifed map object
+      operationId: PATCH_api-world-objects-id
+      requestBody:
+        content:
+          application/json:
+            example:
+              health: 20
+              position:
+                z: 190
+              flags:
+                MF_SHADOW: true
+            schema:
+              $ref: '#/components/schemas/MapObject'
+        required: true
+    delete:
+      responses:
+        '204':
+          description: The specified object was deleted
+        '404':
+          description: The specified object does not exist
+      description: Delete the specified map object
+      operationId: DELETE_api-world-objects-id
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+components:
+  schemas:
+    World:
+      title: World
+      properties:
+        episode:
+          description: The current episode
+          type: integer
+        map:
+          description: The current map
+          type: integer
+        lights:
+          description: Lights state
+          type: string
+      type: object
+    Door:
+      title: Door properties
+      type: string
+    MapObject:
+      title: MapObject
+      description: Location of this item in world units angle
+      properties:
+        id:
+          description: Identifier of this object
+          example: 1
+          type: integer
+        position:
+          title: Position
+          properties:
+            x:
+              type: integer
+            'y':
+              type: integer
+            z:
+              description: positive z points upwards
+              type: integer
+          type: object
+      type: object
+    SpawnMapObject:
+      properties:
+        type:
+          description: Type of object to spawn
+          example: Barrel
+          type: string
+        distance:
+          description: Distance from player to spawn this object
+          example: 300
+          type: integer
+      required:
+        - type
+        - distance
+      type: object
+    PlayerAction:
+      properties:
+        type:
+          description: Action to perform
+          example: shoot | forward | backward | turn-left | turn-right | use
+          type: string
+      required:
+        - type
+      type: object
+    Player:
+      title: MapObject
+      properties:
+        armor:
+          description: amount of armor remaining
+          type: integer
+        kills:
+          description: kill count
+          type: integer
+        items:
+          description: number of items picked up
+          type: integer
+        secrets:
+          description: number of secret areas found
+          type: integer
+        weapon:
+          description: '0=hands, 1=pistol etc'
+          type: integer
+        keyCards:
+          properties:
+            blue:
+              type: boolean
+            red:
+              type: boolean
+            yellow:
+              type: boolean
+          required:
+            - blue
+            - red
+            - yellow
+          type: object
+        cheatFlags:
+          properties:
+            CF_GODMODE:
+              type: boolean
+            CF_NO_CLIP:
+              type: boolean
+          type: object
+        id:
+          description: Identifier of this object
+          example: 1
+          type: integer
+        position:
+          title: Position
+          description: Location of this item in world units
+          properties:
+            x:
+              type: integer
+            'y':
+              type: integer
+            z:
+              description: positive z points upwards
+              type: integer
+          type: object
+        angle:
+          description: Angle this object is pointing
+          type: integer
+        health:
+          description: Health remaining
+          type: integer
+        type:
+          description: Type of this object
+          type: string
+        distance:
+          description: Distance from player
+          type: integer
+        attacking:
+          description: ID of the object this object is attacking
+          type: integer
+        flags:
+          title: Map Object flags
+          properties:
+            MF_SPECIAL:
+              description: 'When this item is picked up, call P_SpecialThing'
+              type: boolean
+            MF_SOLID:
+              description: Cannot be walked through
+              type: boolean
+            MF_SHOOTABLE:
+              description: Takes damage when shot
+              type: boolean
+            MF_NOGRAVITY:
+              description: Don't apply regular world gravity
+              type: boolean
+            MF_NOCLIP:
+              type: boolean
+            MF_SHADOW:
+              description: >-
+                Render this item with the flickering half-invisible shadow
+                rendering
+              type: boolean
+            MF_CORPSE:
+              description: Don't respond to any action
+              type: boolean
+          type: object
+      type: object
+  responses: {}
+  parameters: {}
+  examples: {}
+  requestBodies: {}
+  headers: {}
+  securitySchemes: {}
+  links: {}
+  callbacks: {}

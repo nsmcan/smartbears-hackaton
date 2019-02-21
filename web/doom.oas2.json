@@ -1,0 +1,682 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "RESTful-DOOM",
+    "version": ""
+  },
+  "host": "localhost:7777",
+  "schemes": [
+    "http"
+  ],
+  "definitions": {
+    "World": {
+      "title": "World",
+      "properties": {
+        "episode": {
+          "description": "The current episode",
+          "type": "integer"
+        },
+        "map": {
+          "description": "The current map",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "Door": {
+      "title": "Door properties",
+      "type": "string"
+    },
+    "MapObject": {
+      "title": "MapObject",
+      "description": "Location of this item in world units angle",
+      "properties": {
+        "id": {
+          "description": "Identifier of this object",
+          "example": 1,
+          "type": "integer"
+        },
+        "position": {
+          "title": "Position",
+          "properties": {
+            "x": {
+              "type": "integer"
+            },
+            "y": {
+              "type": "integer"
+            },
+            "z": {
+              "description": "positive z points upwards",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "SpawnMapObject": {
+      "properties": {
+        "type": {
+          "description": "Type of object to spawn",
+          "example": "Barrel",
+          "type": "string"
+        },
+        "distance": {
+          "description": "Distance from player to spawn this object",
+          "example": 300,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "distance"
+      ],
+      "type": "object"
+    },
+    "PlayerAction": {
+      "properties": {
+        "type": {
+          "description": "Action to perform",
+          "example": "shoot | forward | backward | turn-left | turn-right | use",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Player": {
+      "title": "MapObject",
+      "properties": {
+        "armor": {
+          "description": "amount of armor remaining",
+          "type": "integer"
+        },
+        "kills": {
+          "description": "kill count",
+          "type": "integer"
+        },
+        "items": {
+          "description": "number of items picked up",
+          "type": "integer"
+        },
+        "secrets": {
+          "description": "number of secret areas found",
+          "type": "integer"
+        },
+        "weapon": {
+          "description": "0=hands, 1=pistol etc",
+          "type": "integer"
+        },
+        "keyCards": {
+          "properties": {
+            "blue": {
+              "type": "boolean"
+            },
+            "red": {
+              "type": "boolean"
+            },
+            "yellow": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "blue",
+            "red",
+            "yellow"
+          ],
+          "type": "object"
+        },
+        "cheatFlags": {
+          "properties": {
+            "CF_GODMODE": {
+              "type": "boolean"
+            },
+            "CF_NO_CLIP": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "id": {
+          "description": "Identifier of this object",
+          "example": 1,
+          "type": "integer"
+        },
+        "position": {
+          "title": "Position",
+          "description": "Location of this item in world units",
+          "properties": {
+            "x": {
+              "type": "integer"
+            },
+            "y": {
+              "type": "integer"
+            },
+            "z": {
+              "description": "positive z points upwards",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "angle": {
+          "description": "Angle this object is pointing",
+          "type": "integer"
+        },
+        "health": {
+          "description": "Health remaining",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Type of this object",
+          "type": "string"
+        },
+        "distance": {
+          "description": "Distance from player",
+          "type": "integer"
+        },
+        "attacking": {
+          "description": "ID of the object this object is attacking",
+          "type": "integer"
+        },
+        "flags": {
+          "title": "Map Object flags",
+          "properties": {
+            "MF_SPECIAL": {
+              "description": "When this item is picked up, call P_SpecialThing",
+              "type": "boolean"
+            },
+            "MF_SOLID": {
+              "description": "Cannot be walked through",
+              "type": "boolean"
+            },
+            "MF_SHOOTABLE": {
+              "description": "Takes damage when shot",
+              "type": "boolean"
+            },
+            "MF_NOGRAVITY": {
+              "description": "Don't apply regular world gravity",
+              "type": "boolean"
+            },
+            "MF_NOCLIP": {
+              "type": "boolean"
+            },
+            "MF_SHADOW": {
+              "description": "Render this item with the flickering half-invisible shadow rendering",
+              "type": "boolean"
+            },
+            "MF_CORPSE": {
+              "description": "Don't respond to any action",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "paths": {
+    "/api/player": {
+      "get": {
+        "description": "Query the player",
+        "operationId": "GET_api-player",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": 0,
+                "position": {
+                  "x": -32,
+                  "y": -240,
+                  "z": 24
+                },
+                "angle": 90,
+                "health": 100,
+                "type": "Player",
+                "flags": {
+                  "MF_SOLID": true,
+                  "MF_SHOOTABLE": true
+                },
+                "armor": 0,
+                "kills": 0,
+                "items": 0,
+                "secrets": 0,
+                "weapon": 1,
+                "keyCards": {
+                  "blue": false,
+                  "red": false,
+                  "yellow": false
+                },
+                "cheatFlags": {}
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Player"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the player",
+        "operationId": "PATCH_api-player",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": 0,
+                "position": {
+                  "x": -32,
+                  "y": -240,
+                  "z": 24
+                },
+                "angle": 90,
+                "height": 56,
+                "health": 100,
+                "type": "Player",
+                "flags": {
+                  "MF_SOLID": true,
+                  "MF_SHOOTABLE": true,
+                  "MF_DROPOFF": true,
+                  "MF_PICKUP": true,
+                  "MF_NOTDMATCH": true
+                },
+                "armor": 0,
+                "kills": 0,
+                "items": 0,
+                "secrets": 0,
+                "weapon": 1,
+                "keyCards": {
+                  "blue": false,
+                  "red": false,
+                  "yellow": false
+                },
+                "cheatFlags": {}
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Player"
+            }
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "weapon": 3
+              },
+              "$ref": "#/definitions/Player"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/player/actions": {
+      "post": {
+        "description": "Create an action for the player to perform",
+        "operationId": "POST_api-player-actions",
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "type": "shoot"
+              },
+              "$ref": "#/definitions/PlayerAction"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/world": {
+      "get": {
+        "description": "Query the current world state",
+        "operationId": "GET_api-world",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "episode": 1,
+                "map": 2
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/World"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the current world state",
+        "operationId": "PATCH_api-world",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "episode": 1,
+                "map": 3
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/World"
+            }
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "map": 3
+              },
+              "$ref": "#/definitions/World"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/world/doors": {
+      "get": {
+        "description": "Query door items",
+        "operationId": "GET_api-world-doors",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "example": [
+                {
+                  "id": 140,
+                  "state": "closed",
+                  "keyRequired": "none"
+                }
+              ],
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Door"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/world/doors/{id}": {
+      "get": {
+        "description": "Query the specified door",
+        "operationId": "GET_api-world-doors-id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": 140,
+                "state": "closed",
+                "keyRequired": "none"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Door"
+            }
+          },
+          "404": {
+            "description": "The specified door does not exist"
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the specified door",
+        "operationId": "PATCH_api-world-doors-id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": 140,
+                "state": "open",
+                "keyRequired": "none"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Door"
+            }
+          },
+          "404": {
+            "description": "The specified door does not exist"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "state": "open"
+              },
+              "$ref": "#/definitions/Door"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "description": "door id",
+          "type": "string",
+          "in": "path",
+          "name": "id",
+          "required": true
+        }
+      ]
+    },
+    "/api/world/objects": {
+      "get": {
+        "description": "Query map object items",
+        "operationId": "GET_api-world-objects",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MapObject"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "description": "Only return items up to this distance from player\n",
+            "type": "string",
+            "in": "query",
+            "name": "distance",
+            "required": true
+          }
+        ]
+      },
+      "post": {
+        "description": "Spawn a new map object",
+        "operationId": "POST_api-world-objects",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": 1
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/MapObject"
+            }
+          },
+          "400": {
+            "description": "The specified object type is invalid"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "type": "IMP",
+                "distance": 250
+              },
+              "$ref": "#/definitions/SpawnMapObject"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/world/objects/{id}": {
+      "get": {
+        "description": "Query the specified map object",
+        "operationId": "GET_api-world-objects-id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": 1
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/MapObject"
+            }
+          },
+          "404": {
+            "description": "The specified object does not exist"
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the specifed map object",
+        "operationId": "PATCH_api-world-objects-id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "examples": {
+              "application/json": {
+                "id": 1
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/MapObject"
+            }
+          },
+          "404": {
+            "description": "The specified object does not exist"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "example": {
+                "health": 20,
+                "position": {
+                  "z": 190
+                },
+                "flags": {
+                  "MF_SHADOW": true
+                }
+              },
+              "$ref": "#/definitions/MapObject"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      },
+      "delete": {
+        "description": "Delete the specified map object",
+        "operationId": "DELETE_api-world-objects-id",
+        "responses": {
+          "204": {
+            "description": "The specified object was deleted"
+          },
+          "404": {
+            "description": "The specified object does not exist"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "id",
+          "required": true
+        }
+      ]
+    }
+  }
+}
