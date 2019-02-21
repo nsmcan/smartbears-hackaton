@@ -9,7 +9,15 @@ from msvcrt import getch
 def get_key():
     first_char = getch()
     if first_char == b'\xe0' or first_char == b'\x00':
-        return {b"H": "up", b"P": "down", b"M": "right", b"K": "left"}.get(getch(),"")
+        second_char = getch()
+        return {
+                b"H": "up", 
+                b"P": "down", 
+                b"M": "right", 
+                b"K": "left", 
+                b"Q": "sright", 
+                b"O": "sleft"
+            }.get(second_char,"")
     else:
         return first_char.decode('latin1')
 
@@ -26,7 +34,7 @@ def play(action):
         print("Exception when calling DefaultApi->p_ost_api_player_actions: %s\n" % e)
     try:
         api_response = api_instance.g_et_api_player()
-        #pprint(api_response)
+        pprint(api_response.position)
     except ApiException as e:
         print("Exception when calling DefaultApi->g_et_api_player: %s\n" % e)
 
@@ -51,6 +59,10 @@ def main():
             action = 'turn-left'
         elif key == "right": 
             action = 'turn-right'
+        elif key == "sleft": 
+            action = 'strafe-left'
+        elif key == "sright": 
+            action = 'strafe-right'
         elif key == "z": 
             action = 'shoot'
         elif key == "q":
