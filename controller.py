@@ -71,6 +71,7 @@ def play(action, check_door=False, fighting=False):
                 play('use')
                 door_check = api_instance.g_et_api_world_doors_id(door_id)
                 if door_check['state'] == "open":
+                    save_door(door_id)
                     play('forward')
                     passed_doors.append(door_id)
                     print("Door {} opened".format(door_id))
@@ -84,6 +85,38 @@ def play(action, check_door=False, fighting=False):
                 fight(obj['id'])
 
     return dist
+
+import json
+def save_step():
+    print("Saving step...")
+    filename = 'steps.log'
+    player = api_instance.g_et_api_player()
+    with open(filename,'a') as f:
+        state = { 
+            'type': 'player',
+            'x': player.position.x,
+            'y': player.position.y,
+            'z': player.position.z,
+            'angle': player.angle
+        }
+        print(json.dumps(state), file = f)
+
+
+def save_door(door_id=None):
+    print("Saving door...")
+    filename = 'steps.log'
+    player = api_instance.g_et_api_player()
+    with open(filename,'a') as f:
+        state = { 
+            'type': 'door',
+            'x': player.position.x,
+            'y': player.position.y,
+            'z': player.position.z,
+            'angle': player.angle,
+            'door': door_id
+        }
+        print(json.dumps(state), file = f)
+
 
 def fight(id):
     print('Fighting {0}...'.format(id))
@@ -195,6 +228,10 @@ def main():
         elif key == "a": 
             print("Autopilot mode...")
             autopilot()
+        elif key == "s": 
+            save_step()
+        elif key == "d": 
+            save_door()
         elif key == "q":
             print("Exiting...")
             break
