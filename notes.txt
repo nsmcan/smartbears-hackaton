@@ -1,3 +1,5 @@
+How to build Restful Doom for Windows
+
 https://www.chocolate-doom.org/wiki/index.php/Building_Chocolate_Doom_on_Windows
 
 1. Download msys2 x86_64 from https://www.msys2.org/ and install into C:\Tools\msys64
@@ -41,10 +43,3 @@ http://distro.ibiblio.org/pub/linux/distributions/slitaz/sources/packages/d/doom
 
 11. From the c:/tools/doom/ run the Restful Doom:
     restful-doom.exe -iwad doom1.wad -apiport 7777
-
-
-
-git remote add origin https://${git_user_id}:${GIT_TOKEN}@github.com/${git_user_id}/${git_repo_id}.git
-git remote add origin https://nsmcan:c79761f496d6f33ebb48cb29d19473fee58d294b@github.com/nsmcan/smartbears-hackaton.git
-
-git push -u origin master
